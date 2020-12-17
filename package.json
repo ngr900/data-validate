@@ -1,7 +1,7 @@
 {
   "name": "@ngr900/data-validate",
   "version": "0.1.0",
-  "description": "simple validation library",
+  "description": "extensible validation library",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/test.js",
