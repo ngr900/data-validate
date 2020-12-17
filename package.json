@@ -1,0 +1,24 @@
+{
+  "name": "@ngr900/data-validate",
+  "version": "0.1.0",
+  "description": "simple validation library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/test.js",
+    "build": "webpack"
+  },
+  "author": "Kamil Szydlowski",
+  "license": "MIT",
+  "repository": "https://github.com/ngr900/data-validate",
+  "dependencies": {
+    "@ngr900/deep-property": "^0.1.0",
+    "@ngr900/simple-string-templates": "^0.1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "mocha": "^8.2.1",
+    "webpack": "^5.10.3",
+    "webpack-cli": "^4.2.0"
+  }
+}
