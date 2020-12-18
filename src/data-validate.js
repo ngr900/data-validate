@@ -10,15 +10,14 @@ const {
 const {
 	isFunction,
 	isBoolean,
-	isObject,
 	isArray,
 	isString,
-	isUndefinedOrNull,
 	isPlainObject,
 	isInteger,
 	isUndefined,
-	prettyJoin,
-} = require('./helpers.js');
+} = require('@ngr900/type-check');
+
+const { prettyJoin, isUndefinedOrNull } = require('./misc.js');
 
 const ValidatorError = require('./errors/ValidatorError.js');
 const ValidationError = require('./errors/ValidationError.js');
