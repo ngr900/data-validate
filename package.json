@@ -12,7 +12,8 @@
   "repository": "https://github.com/ngr900/data-validate",
   "dependencies": {
     "@ngr900/deep-property": "^0.1.0",
-    "@ngr900/simple-string-templates": "^0.1.0"
+    "@ngr900/simple-string-templates": "^0.1.0",
+    "@ngr900/type-check": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
