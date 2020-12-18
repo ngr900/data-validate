@@ -1,6 +1,51 @@
 const { expect } = require('chai');
 const { validateData } = require('./../src/data-validate.js');
 
+describe('presence validator', function() {
+	it('validates presence, absence and emptiness', function() {
+		expect(validateData({
+			presentWhenProhibited: 'value',
+			presentButEmpty: ''
+		}, {
+			presentWhenProhibited: {
+				presence: {
+					present: false
+				}
+			},
+			presentButEmpty: {
+				presence: {
+					present: true,
+					notEmpty: true
+				}
+			},
+			absentWhenRequired: {
+				presence: {
+					present: true
+				}
+			}
+		})).to.deep.equal({
+			presentWhenProhibited: [`must be blank`],
+			presentButEmpty: [`must not be blank`],
+			absentWhenRequired: [`must not be blank`]
+		})
+	})
+	it('allows shorthand properties', function() {
+		expect(validateData({
+			presentWhenProhibited: 'value'
+		}, {
+			presentWhenProhibited: {
+				presence: false
+			},
+			absentWhenRequired: {
+				presence: true
+			}
+		})).to.deep.equal({
+			presentWhenProhibited: [`must be blank`],
+			absentWhenRequired: [`must not be blank`]
+		})
+	})
+})
+
 describe('length validator', function () {
 	it('validates min, max and equal length', function () {
 		expect(
@@ -60,7 +105,7 @@ describe('length validator', function () {
 			shortEnoughButTooLong: ['is too long (maximum is 2 characters)']
 		});
 	});
-	it('correctly parses shorthand properties', function () {
+	it('allows shorthand properties', function () {
 		expect(
 			validateData(
 				{
