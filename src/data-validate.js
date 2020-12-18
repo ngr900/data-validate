@@ -63,10 +63,8 @@ function executeValidator(
 	validatorArgs,
 	propertyExists,
 	propertyValue,
-	propertyName
-	// dataObject,
-	// propertyErrors,
-	// allErrors
+	propertyName,
+	options
 ) {
 	if (validatorType === 'custom') {
 		// TODO
@@ -83,6 +81,12 @@ function executeValidator(
 	if (!isPlainObject(validatorArgs)) {
 		validatorArgs = parseShorthand(validatorObject, validatorArgs);
 	}
+
+	// if (options.validateArguments) {
+	// 	if (validatorObject.arguments === undefined) {
+	// 		throw new ValidatorError('')
+	// 	}
+	// }
 
 	// execute the actual validation
 	let errors = validateFunction(validatorArgs, propertyExists, propertyValue);
@@ -141,6 +145,12 @@ function executeValidator(
 }
 
 function validateData(dataObject, instructions, options = {}) {
+	options = Object.assign(
+		{
+			validateArguments: true,
+		},
+		options
+	);
 	// allow for arrays to be validated
 	if (isArray(dataObject)) {
 		return dataObject.map((dataElement) =>
@@ -204,9 +214,7 @@ function validateData(dataObject, instructions, options = {}) {
 				propertyExists,
 				propertyValue,
 				propertyName,
-				dataObject,
-				propertyErrors,
-				allErrors
+				options
 			);
 
 			propertyErrors.push(...validatorErrors);
