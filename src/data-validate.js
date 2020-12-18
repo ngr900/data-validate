@@ -55,7 +55,7 @@ function parseShorthand(validatorObject, shorthandValue) {
 	throw new ValidatorError(
 		`Validator ${validatorObject.name} only accepts ${prettyJoin(
 			validatorShorthands
-		)}.`
+		)} shorthands.`
 	);
 }
 
