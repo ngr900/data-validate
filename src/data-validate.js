@@ -101,7 +101,7 @@ function executeValidator(
 			if (customMessages[errorType]) {
 				return customMessages[errorType];
 			} else if (typeof customMessages === 'string') {
-				return customeMessages;
+				return customMessages;
 			} else if (validatorMessages[errorType]) {
 				return validatorMessages[errorType];
 			} else {
