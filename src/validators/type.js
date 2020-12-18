@@ -1,12 +1,20 @@
+const typeMap = {
+	...require('@ngr900/type-check').map,
+	date: (value) => value instanceof Date,
+};
+
 module.exports = {
+	name: 'type',
 	validate(validatorArgs, propertyExists, propertyValue) {
 		if (!propertyExists) return;
-		const expectedType = (validatorArgs.type || validatorArgs) + '';
+		const expectedType = validatorArgs.type;
+		const isExpectedType = typeMap[expectedType](propertyValue) === true;
+		if (!isExpectedType) return 'wrongType'
 	},
 	message: {
-		notValid: 'is not valid',
-		wrongLength: 'is the wrong length (should be ${equal} characters)',
-		tooLong: 'is too long (maximum is ${max} characters)',
-		tooShort: 'is too short (minimum is ${min} characters)',
+		wrongType: 'is of the wrong type (should be ${type})'
+	},
+	shorthand: {
+		string: (type) => ({ type }),
 	},
 };

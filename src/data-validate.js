@@ -26,6 +26,7 @@ const validators = {};
 
 validators.length = require('./validators/length.js');
 validators.presence = require('./validators/presence.js');
+validators.type = require('./validators/type.js');
 
 const shorthands = {
 	integer: isInteger,
