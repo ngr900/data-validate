@@ -5,8 +5,7 @@ const typeMap = {
 
 module.exports = {
 	name: 'type',
-	validate(validatorArgs, propertyExists, propertyValue) {
-		if (!propertyExists) return;
+	validate(validatorArgs, propertyValue) {
 		const expectedType = validatorArgs.type;
 		const isExpectedType = typeMap[expectedType](propertyValue) === true;
 		if (!isExpectedType) return 'wrongType'

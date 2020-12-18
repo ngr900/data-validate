@@ -2,7 +2,7 @@ const { isObject, isArray, isString, isBoolean } = require('@ngr900/type-check')
 
 module.exports = {
 	name: 'presence',
-	validate(validatorArgs, propertyExists, propertyValue) {
+	validate(validatorArgs, propertyValue, propertyExists) {
 		const expectedState = getExpectedState(validatorArgs);
 		const stateCheck = propertyExists === expectedState;
 		const emptyCheck = !validatorArgs.notEmpty || !isEmpty(propertyValue);
@@ -22,7 +22,8 @@ module.exports = {
 	},
 	shorthand: {
 		boolean: present => ({present})
-	}
+	},
+	validatesPresence: true
 };
 
 function isEmpty(value) {

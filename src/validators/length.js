@@ -1,7 +1,6 @@
 module.exports = {
 	name: 'length',
-	validate(validatorArgs, propertyExists, propertyValue) {
-		if (!propertyExists) return;
+	validate(validatorArgs, propertyValue) {
 		if (propertyValue.length === undefined) return 'notValid';
 		const { min, max, equal } = validatorArgs;
 		if (equal !== undefined && propertyValue.length !== equal)

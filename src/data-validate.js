@@ -62,8 +62,8 @@ function parseShorthand(validatorObject, shorthandValue) {
 function executeValidator(
 	validatorType,
 	validatorArgs,
-	propertyExists,
 	propertyValue,
+	propertyExists,
 	propertyName,
 	options
 ) {
@@ -78,6 +78,10 @@ function executeValidator(
 
 	const validatorObject = validators[validatorType];
 
+	if (!validatorObject.validatesPresence && !propertyExists) {
+		return [];
+	}
+
 	if (!isPlainObject(validatorArgs)) {
 		validatorArgs = parseShorthand(validatorObject, validatorArgs);
 	}
@@ -90,7 +94,7 @@ function executeValidator(
 
 	// execute the actual validation
 	const validateFunction = validatorObject.validate;
-	let errors = validateFunction(validatorArgs, propertyExists, propertyValue);
+	let errors = validateFunction(validatorArgs, propertyValue, propertyExists);
 	// validators may return single errors, put them into an array
 	if (errors === undefined) {
 		errors = [];
@@ -120,8 +124,8 @@ function executeValidator(
 		.map((errorMessageTemplate) => {
 			if (isFunction(errorMessageTemplate)) {
 				errorMessageTemplate = errorMessageTemplate(
-					propertyExists,
 					propertyValue,
+					propertyExists,
 					propertyName,
 					validatorArgs,
 					validatorType
@@ -137,8 +141,8 @@ function executeValidator(
 				);
 			}
 			return interpolateStringTemplate(errorMessageTemplate, {
-				propExists: propertyExists,
 				propValue: propertyValue,
+				propExists: propertyExists,
 				propName: propertyName,
 				...validatorArgs,
 			});
@@ -171,8 +175,8 @@ function validateData(dataObject, instructions, options = {}) {
 		// allow for dynamic validators
 		if (isFunction(propertyValidators)) {
 			propertyValidators = propertyValidators(
-				propertyExists,
 				propertyValue,
+				propertyExists,
 				propertyName,
 				dataObject,
 				allErrors
@@ -195,8 +199,8 @@ function validateData(dataObject, instructions, options = {}) {
 			// allow for single dynamic validators
 			if (isFunction(validatorArgs)) {
 				validatorArgs = validatorArgs(
-					propertyExists,
 					propertyValue,
+					propertyExists,
 					propertyName,
 					dataObject,
 					allErrors,
@@ -212,8 +216,8 @@ function validateData(dataObject, instructions, options = {}) {
 			const validatorErrors = executeValidator(
 				validatorType,
 				validatorArgs,
-				propertyExists,
 				propertyValue,
+				propertyExists,
 				propertyName,
 				options
 			);
