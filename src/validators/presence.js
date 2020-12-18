@@ -1,27 +1,5 @@
 const { isObject, isArray, isString, isBoolean } = require('@ngr900/type-check');
 
-function isEmpty(value) {
-	if (isObject(value)) {
-		return Object.keys(value).length === 0;
-	} else if (isArray(value)) {
-		return value.length === 0;
-	} else if (isString(value)) {
-		return value.trim().length === 0;
-	} else {
-		return false;
-	}
-}
-
-function getExpectedState(validatorArgs) {
-	if (isBoolean(validatorArgs.present)) {
-		return validatorArgs.present;
-	} else if (!validatorArgs) {
-		return false;
-	} else {
-		return true;
-	}
-}
-
 module.exports = {
 	name: 'presence',
 	validate(validatorArgs, propertyExists, propertyValue) {
@@ -46,3 +24,25 @@ module.exports = {
 		boolean: present => ({present})
 	}
 };
+
+function isEmpty(value) {
+	if (isObject(value)) {
+		return Object.keys(value).length === 0;
+	} else if (isArray(value)) {
+		return value.length === 0;
+	} else if (isString(value)) {
+		return value.trim().length === 0;
+	} else {
+		return false;
+	}
+}
+
+function getExpectedState(validatorArgs) {
+	if (isBoolean(validatorArgs.present)) {
+		return validatorArgs.present;
+	} else if (!validatorArgs) {
+		return false;
+	} else {
+		return true;
+	}
+}
