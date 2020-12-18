@@ -23,6 +23,14 @@ module.exports = {
 	shorthand: {
 		boolean: present => ({present})
 	},
+	arguments: {
+		present: {
+			type: 'boolean'
+		},
+		notEmpty: {
+			type: 'boolean'
+		}
+	},
 	validatesPresence: true
 };
 

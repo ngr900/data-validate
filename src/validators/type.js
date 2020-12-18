@@ -16,4 +16,9 @@ module.exports = {
 	shorthand: {
 		string: (type) => ({ type }),
 	},
+	arguments: {
+		type: {
+			inclusion: Object.keys(typeMap)
+		}
+	}
 };

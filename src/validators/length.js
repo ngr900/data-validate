@@ -18,4 +18,15 @@ module.exports = {
 		integer: (equal) => ({ equal }),
 		array: ([min, max]) => ({ min, max }),
 	},
+	arguments: {
+		min: {
+			type: 'integer'
+		},
+		max: {
+			type: 'integer'
+		},
+		equal: {
+			type: 'integer'
+		},
+	}
 };
