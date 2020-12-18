@@ -1,7 +1,6 @@
 const {
 	extractDeepProperty,
 	setDeepProperty,
-	DeepPropertyError,
 } = require('@ngr900/deep-property');
 
 const {
@@ -9,59 +8,55 @@ const {
 } = require('@ngr900/simple-string-templates');
 
 const {
-	registerValidator,
-	getValidatorFunction,
-} = require('./validator-registry.js');
+	isFunction,
+	isBoolean,
+	isObject,
+	isArray,
+	isString,
+	isUndefinedOrNull,
+	isPlainObject,
+	isInteger,
+	isUndefined,
+	prettyJoin,
+} = require('./helpers.js');
 
-class ValidatorError extends Error {
-	constructor(message) {
-		super(message);
-		this.name = 'ValidatorError';
-	}
-}
-
-function isFunction(value) {
-	return typeof value === 'function';
-}
-
-function isObject(value) {
-	return typeof value === 'object' && value !== null;
-}
-
-function isArray(value) {
-	return Array.isArray(value);
-}
-
-function isString(value) {
-	return typeof value === 'string';
-}
+const ValidatorError = require('./ValidatorError.js');
+const ValidationError = require('./ValidationError.js');
 
 const validators = {};
 
-validators.length = {
-	validate(validatorArguments, propertyExists, propertyValue) {
-		if (!propertyExists) return;
-		if (propertyValue.length === undefined) return 'notValid';
-		const { min, max, equal } = validatorArguments;
-		if (equal !== undefined && propertyValue.length !== equal)
-			return 'wrongLength';
-		if (min !== undefined && propertyValue.length < min) return 'tooShort';
-		if (max !== undefined && propertyValue.length > max) return 'tooLong';
-	},
-	messages: {
-		notValid: 'is not valid',
-		wrongLength: 'is the wrong length (should be ${equal} characters)',
-		tooLong: 'is too long (maximum is ${max} characters)',
-		tooShort: 'is too short (minimum is ${min} characters)',
-	},
+validators.length = require('./validators/length.js');
+validators.presence = require('./validators/presence.js');
+
+const shorthands = {
+	integer: isInteger,
+	string: isString,
+	array: isArray,
+	boolean: isBoolean,
 };
 
-function getValidator(validatorType) {
-	if (validators[validatorType] === undefined) {
-		throw new ValidatorError(`Validator type ${validatorType} not found.`);
-	} else {
-		return validators[validatorType];
+function parseShorthand(validatorObject, shorthandValue) {
+	if (!isPlainObject(validatorObject.shorthand)) {
+		throw new ValidatorError(
+			`Validator ${validatorObject.name} does not allow shorthand arguments.`
+		);
 	}
+	const validatorShorthands = Object.keys(validatorObject.shorthand);
+	for (shorthandType of validatorShorthands) {
+		if (isUndefined(shorthands[shorthandType])) {
+			throw new ValidatorError(
+				`Shorthand type ${shorthandType} is not supported.`
+			);
+		}
+		if (shorthands[shorthandType](shorthandValue)) {
+			return validatorObject.shorthand[shorthandType](shorthandValue);
+		}
+	}
+	throw new ValidatorError(
+		`Validator ${validatorObject.name} only accepts ${prettyJoin(
+			validatorShorthands
+		)}.`
+	);
 }
 
 function executeValidator(
@@ -79,8 +74,16 @@ function executeValidator(
 		return;
 	}
 
-	const validatorObject = getValidator(validatorType);
+	if (validators[validatorType] === undefined) {
+		throw new ValidatorError(`Validator type ${validatorType} not found.`);
+	}
+
+	const validatorObject = validators[validatorType];
 	const validateFunction = validatorObject.validate;
+
+	if (!isPlainObject(validatorArgs)) {
+		validatorArgs = parseShorthand(validatorObject, validatorArgs);
+	}
 
 	// execute the actual validation
 	let errors = validateFunction(validatorArgs, propertyExists, propertyValue);
@@ -93,8 +96,8 @@ function executeValidator(
 	// fill templates, choose message etc.
 
 	// prepare error message templates
-	const validatorMessages = validatorObject.messages;
-	const customMessages = validatorArgs.messages || {};
+	const validatorMessages = validatorObject.message;
+	const customMessages = validatorArgs.message || {};
 	return errors
 		.map((errorType) => {
 			// TODO this needs work
@@ -105,10 +108,9 @@ function executeValidator(
 			} else if (validatorMessages[errorType]) {
 				return validatorMessages[errorType];
 			} else {
-				console.warn(
-					`No error message template found for error "${errorType}" in validator "${validatorType}"`
+				throw new ValidatorError(
+					`No error message template found for "${errorType}" in "${validatorType}.`
 				);
-				return 'is not valid (no specific message available)';
 			}
 		})
 		.map((errorMessageTemplate) => {
@@ -127,7 +129,7 @@ function executeValidator(
 				}
 			} else if (!isString(errorMessageTemplate)) {
 				throw new ValidatorError(
-					'Error template must be a string or a function.'
+					`Error template must be a string or a function, got ${typeof errorMessageTemplate} instead.`
 				);
 			}
 			return interpolateStringTemplate(errorMessageTemplate, {
@@ -146,8 +148,8 @@ function validateData(dataObject, instructions, options = {}) {
 			validateData(dataElement, instructions, options)
 		);
 	}
-	if (!isObject(instructions)) {
-		throw new ValidatorError('Instructions must be given as an object.');
+	if (!isPlainObject(instructions)) {
+		throw new ValidatorError('Instructions must be given as a plain object.');
 	}
 	const allErrors = {};
 	for (let [propertyName, propertyValidators] of Object.entries(instructions)) {
@@ -165,14 +167,14 @@ function validateData(dataObject, instructions, options = {}) {
 				dataObject,
 				allErrors
 			);
-			if (!isObject(propertyValidators)) {
+			if (!isPlainObject(propertyValidators)) {
 				throw new ValidatorError(
-					'Property validators function must return an object.'
+					'Property validators function must return a plain object.'
 				);
 			}
-		} else if (!isObject(propertyValidators)) {
+		} else if (!isPlainObject(propertyValidators)) {
 			throw new ValidatorError(
-				'Property validators must be given as an object or a function that returns an object.'
+				'Property validators must be given as an object or a function that returns a plain object.'
 			);
 		}
 		const propertyErrors = [];
@@ -189,6 +191,11 @@ function validateData(dataObject, instructions, options = {}) {
 					dataObject,
 					allErrors,
 					propertyErrors
+				);
+			}
+			if (isUndefinedOrNull(validatorArgs)) {
+				throw new ValidatorError(
+					'Validator arguments must not be undefined or null.'
 				);
 			}
 			// execute validator and get errors
