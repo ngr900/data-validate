@@ -28,6 +28,7 @@ validators.length = require('./validators/length.js');
 validators.presence = require('./validators/presence.js');
 validators.type = require('./validators/type.js');
 validators.inclusion = require('./validators/inclusion.js');
+validators.exclusion = require('./validators/exclusion.js');
 
 const shorthands = {
 	integer: isInteger,
