@@ -1,50 +1,5 @@
 const { expect } = require('chai');
-const { validateData } = require('./../src/data-validate.js');
-
-describe('presence validator', function() {
-	it('validates presence, absence and emptiness', function() {
-		expect(validateData({
-			presentWhenProhibited: 'value',
-			presentButEmpty: ''
-		}, {
-			presentWhenProhibited: {
-				presence: {
-					present: false
-				}
-			},
-			presentButEmpty: {
-				presence: {
-					present: true,
-					notEmpty: true
-				}
-			},
-			absentWhenRequired: {
-				presence: {
-					present: true
-				}
-			}
-		})).to.deep.equal({
-			presentWhenProhibited: [`must be blank`],
-			presentButEmpty: [`must not be blank`],
-			absentWhenRequired: [`must not be blank`]
-		})
-	})
-	it('allows shorthand arguments', function() {
-		expect(validateData({
-			presentWhenProhibited: 'value'
-		}, {
-			presentWhenProhibited: {
-				presence: false
-			},
-			absentWhenRequired: {
-				presence: true
-			}
-		})).to.deep.equal({
-			presentWhenProhibited: [`must be blank`],
-			absentWhenRequired: [`must not be blank`]
-		})
-	})
-})
+const { validateData } = require('./../../src/data-validate.js');
 
 describe('length validator', function () {
 	it('validates min, max and equal length', function () {
@@ -149,40 +104,3 @@ describe('length validator', function () {
 		});
 	});
 });
-
-describe('type validator', function() {
-	it('validates variable types', function() {
-		expect(validateData({
-			stringValue: 'hello',
-			nonStringValue: 1
-		}, {
-			stringValue: {
-				type: {
-					type: 'string'
-				}
-			},
-			nonStringValue: {
-				type: {
-					type: 'string'
-				}
-			},
-		})).to.deep.equal({
-			nonStringValue: [`is of the wrong type (should be string)`]
-		})
-	})
-	it('allows shorthand arguments', function() {
-		expect(validateData({
-			stringValue: 'hello',
-			nonStringValue: 1
-		}, {
-			stringValue: {
-				type: 'string'
-			},
-			nonStringValue: {
-				type: 'string'
-			},
-		})).to.deep.equal({
-			nonStringValue: [`is of the wrong type (should be string)`]
-		})
-	})
-})
