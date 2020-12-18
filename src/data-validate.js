@@ -72,7 +72,7 @@ function executeValidator(
 	}
 
 	if (validators[validatorType] === undefined) {
-		throw new ValidatorError(`Validator type ${validatorType} not found.`);
+		throw new ValidatorError(`Validator "${validatorType}" not found.`);
 	}
 
 	const validatorObject = validators[validatorType];
@@ -112,7 +112,7 @@ function executeValidator(
 				return validatorMessages[errorType];
 			} else {
 				throw new ValidatorError(
-					`No error message template found for "${errorType}" in "${validatorType}.`
+					`No error message template found for "${errorType}" in validator "${validatorType}".`
 				);
 			}
 		})
