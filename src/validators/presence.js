@@ -11,20 +11,26 @@ function getExpectedState(validatorArgs) {
 }
 
 module.exports = {
+	name: 'presence',
 	validate(validatorArgs, propertyExists, propertyValue) {
 		const expectedState = getExpectedState(validatorArgs);
 		const stateCheck = propertyExists === expectedState;
 		const emptyCheck = !validatorArgs.notEmpty || !isEmpty(propertyValue);
-		if (!stateCheck && expectedState === false) {
+
+		const presentWhenProhibited = !stateCheck && expectedState === false;
+		const absentWhenRequired = (!stateCheck && expectedState === true) || (stateCheck && !emptyCheck);
+
+		if (presentWhenProhibited) {
 			return 'presentWhenProhibited';
-		} else if (!stateCheck && expectedState === true) {
-			return 'absentWhenRequired';
-		} else if (stateCheck && !emptyCheck) {
+		} else if (absentWhenRequired) {
 			return 'absentWhenRequired';
 		}
 	},
 	message: {
-		presentWhenProhibited: `must be blank`,
-		absentWhenRequired: `can't be blank`,
+		presentWhenProhibited: 'must be blank',
+		absentWhenRequired: 'must not be blank',
 	},
+	shorthand: {
+		boolean: present => ({present})
+	}
 };
