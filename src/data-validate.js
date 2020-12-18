@@ -20,8 +20,8 @@ const {
 	prettyJoin,
 } = require('./helpers.js');
 
-const ValidatorError = require('./ValidatorError.js');
-const ValidationError = require('./ValidationError.js');
+const ValidatorError = require('./errors/ValidatorError.js');
+const ValidationError = require('./errors/ValidationError.js');
 
 const validators = {};
 
