@@ -76,7 +76,6 @@ function executeValidator(
 	}
 
 	const validatorObject = validators[validatorType];
-	const validateFunction = validatorObject.validate;
 
 	if (!isPlainObject(validatorArgs)) {
 		validatorArgs = parseShorthand(validatorObject, validatorArgs);
@@ -89,6 +88,7 @@ function executeValidator(
 	// }
 
 	// execute the actual validation
+	const validateFunction = validatorObject.validate;
 	let errors = validateFunction(validatorArgs, propertyExists, propertyValue);
 	// validators may return single errors, put them into an array
 	if (errors === undefined) {
