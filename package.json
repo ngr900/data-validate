@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/index.test.js",
+    "test-coverage": "nyc --reporter=text mocha test/index.test.js",
     "build": "webpack"
   },
   "author": "Kamil Szydlowski",
@@ -19,6 +20,7 @@
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^3.0.0",
     "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
     "webpack": "^5.10.3",
     "webpack-cli": "^4.2.0"
   }

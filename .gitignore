@@ -2,3 +2,4 @@ node_modules
 dev.js
 notes.txt
 README.html
+.nyc_output
