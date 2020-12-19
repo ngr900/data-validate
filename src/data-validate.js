@@ -80,7 +80,7 @@ function executeValidator(
 
 	const validatorObject = validators[validatorType];
 
-	if (!validatorObject.validatesPresence && !propertyExists) {
+	if (!validatorObject.validatesPresence && (!propertyExists || (options.ignoreUndefined && propertyValue === undefined))) {
 		return [];
 	}
 
@@ -155,6 +155,7 @@ function validateData(dataObject, instructions, options = {}) {
 	options = Object.assign(
 		{
 			validateArguments: true,
+			ignoreUndefined: false
 		},
 		options
 	);
