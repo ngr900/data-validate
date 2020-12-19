@@ -12,7 +12,8 @@ describe('length validator', function () {
 					tooLong: 'fails max length',
 					justRight: 'passes equal length',
 					justWrong: 'fails equal length',
-					shortEnoughButTooLong: 'passes min, fails max'
+					shortEnoughButTooLong: 'passes min, fails max',
+					doesNotHaveLength: {}
 				},
 				{
 					longEnough: {
@@ -50,6 +51,9 @@ describe('length validator', function () {
 							min: 1,
 							max: 2
 						}
+					},
+					doesNotHaveLength: {
+						length: 0
 					}
 				}
 			)
@@ -57,7 +61,8 @@ describe('length validator', function () {
 			tooShort: ['is too short (minimum is 30 characters)'],
 			tooLong: ['is too long (maximum is 1 characters)'],
 			justWrong: ['is the wrong length (should be 1 characters)'],
-			shortEnoughButTooLong: ['is too long (maximum is 2 characters)']
+			shortEnoughButTooLong: ['is too long (maximum is 2 characters)'],
+			doesNotHaveLength: ['is not valid']
 		});
 	});
 	it('allows shorthand arguments', function () {

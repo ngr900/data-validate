@@ -21,6 +21,25 @@ describe('type validator', function() {
 			nonStringValue: [`is of the wrong type (should be string)`]
 		})
 	})
+	it('validates date type', function() {
+		expect(validateData({
+			nonDate: 'foo',
+			isData: new Date()
+		}, {
+			nonDate: {
+				type: {
+					type: 'date'
+				}
+			},
+			isData: {
+				type: {
+					type: 'date'
+				}
+			},
+		})).to.deep.equal({
+			nonDate: [`is of the wrong type (should be date)`]
+		})
+	})
 	it('allows shorthand arguments', function() {
 		expect(validateData({
 			stringValue: 'hello',
