@@ -80,7 +80,11 @@ function executeValidator(
 
 	const validatorObject = validators[validatorType];
 
-	if (!validatorObject.validatesPresence && (!propertyExists || (options.ignoreUndefined && propertyValue === undefined))) {
+	if (
+		!validatorObject.validatesPresence &&
+		(!propertyExists ||
+			(options.ignoreUndefined && propertyValue === undefined))
+	) {
 		return [];
 	}
 
@@ -94,11 +98,19 @@ function executeValidator(
 	// I heard you like validators, so I put validators in your validators
 	if (options.validateArguments) {
 		if (validatorObject.arguments === undefined) {
-			throw new ValidatorError(`Validator "${validatorType}" does not have an arguments property.`)
+			throw new ValidatorError(
+				`Validator "${validatorType}" does not have an arguments property.`
+			);
 		} else {
-			validatorArgsErrors = validateData(validatorArgs, validatorObject.arguments, {validateArguments: false, ignoreUndefined: true});
+			validatorArgsErrors = validateData(
+				validatorArgs,
+				validatorObject.arguments,
+				{ validateArguments: false, ignoreUndefined: true }
+			);
 			if (Object.keys(validatorArgsErrors).length !== 0) {
-				throw new ValidatorError(`Validator "${validatorType}" on property "${propertyName}" contains the following errors:`)
+				throw new ValidatorError(
+					`Validator "${validatorType}" on property "${propertyName}" contains the following errors:`
+				);
 			}
 		}
 	}
@@ -164,7 +176,7 @@ function validateData(dataObject, instructions, options = {}) {
 	options = Object.assign(
 		{
 			validateArguments: true,
-			ignoreUndefined: false
+			ignoreUndefined: false,
 		},
 		options
 	);
