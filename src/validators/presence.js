@@ -1,20 +1,31 @@
-const { isObject, isArray, isString, isBoolean } = require('@ngr900/type-check');
+const { isPlainObject, isArray, isString, isBoolean } = require('@ngr900/type-check');
 
 module.exports = {
 	name: 'presence',
 	validate(validatorArgs, propertyValue, propertyExists) {
-		const expectedState = getExpectedState(validatorArgs);
-		const stateCheck = propertyExists === expectedState;
-		const emptyCheck = !validatorArgs.notEmpty || !isEmpty(propertyValue);
-
-		const presentWhenProhibited = !stateCheck && expectedState === false;
-		const absentWhenRequired = (!stateCheck && expectedState === true) || (stateCheck && !emptyCheck);
-
-		if (presentWhenProhibited) {
-			return 'presentWhenProhibited';
-		} else if (absentWhenRequired) {
+		const {present, notEmpty} = validatorArgs;
+		if (present !== undefined && present !== propertyExists) {
+			return present ? 'absentWhenRequired' : 'presentWhenProhibited';
+		}
+		if (notEmpty && isEmpty(propertyValue)) {
 			return 'absentWhenRequired';
 		}
+
+
+
+
+		// const expectedState = getExpectedState(validatorArgs);
+		// const stateCheck = propertyExists === expectedState;
+		// const emptyCheck = !validatorArgs.notEmpty || !isEmpty(propertyValue);
+
+		// const presentWhenProhibited = !stateCheck && expectedState === false;
+		// const absentWhenRequired = (!stateCheck && expectedState === true) || (stateCheck && !emptyCheck);
+
+		// if (presentWhenProhibited) {
+		// 	return 'presentWhenProhibited';
+		// } else if (absentWhenRequired) {
+		// 	return 'absentWhenRequired';
+		// }
 	},
 	message: {
 		presentWhenProhibited: 'must be blank',
@@ -35,7 +46,7 @@ module.exports = {
 };
 
 function isEmpty(value) {
-	if (isObject(value)) {
+	if (isPlainObject(value)) {
 		return Object.keys(value).length === 0;
 	} else if (isArray(value)) {
 		return value.length === 0;
@@ -43,15 +54,5 @@ function isEmpty(value) {
 		return value.trim().length === 0;
 	} else {
 		return false;
-	}
-}
-
-function getExpectedState(validatorArgs) {
-	if (isBoolean(validatorArgs.present)) {
-		return validatorArgs.present;
-	} else if (!validatorArgs) {
-		return false;
-	} else {
-		return true;
 	}
 }
