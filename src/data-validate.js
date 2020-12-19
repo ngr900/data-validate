@@ -88,11 +88,20 @@ function executeValidator(
 		validatorArgs = parseShorthand(validatorObject, validatorArgs);
 	}
 
-	// if (options.validateArguments) {
-	// 	if (validatorObject.arguments === undefined) {
-	// 		throw new ValidatorError('')
-	// 	}
-	// }
+	// at this point validator arguments are final
+
+	// validate validator arguments
+	// I heard you like validators, so I put validators in your validators
+	if (options.validateArguments) {
+		if (validatorObject.arguments === undefined) {
+			throw new ValidatorError(`Validator "${validatorType}" does not have an arguments property.`)
+		} else {
+			validatorArgsErrors = validateData(validatorArgs, validatorObject.arguments, {validateArguments: false, ignoreUndefined: true});
+			if (Object.keys(validatorArgsErrors).length !== 0) {
+				throw new ValidatorError(`Validator "${validatorType}" on property "${propertyName}" contains the following errors:`)
+			}
+		}
+	}
 
 	// execute the actual validation
 	const validateFunction = validatorObject.validate;
